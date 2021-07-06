@@ -2,6 +2,22 @@
 #![warn(missing_docs)]
 
 //! Ethereum [token list](https://tokenlists.org/) standard
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use token_list::TokenList;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     // requires enabling the `from-uri` feature
+//!     let token_list = TokenList::from_uri("https://defi.cmc.eth.link").await?;
+//!     
+//!     assert_eq!(token_list.name, "CMC DeFi");
+//!     
+//!     Ok(())
+//! }
+//! ```
 
 use std::collections::HashMap;
 
