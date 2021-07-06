@@ -1,4 +1,4 @@
-name: Security audit
+name: security audit
 
 on:
   schedule:
@@ -6,7 +6,6 @@ on:
 
 jobs:
   audit:
-    name: Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
