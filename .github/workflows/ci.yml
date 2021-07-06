@@ -1,6 +1,22 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.rs"
+      - Cargo.toml
+      - Cargo.lock
+      - .github/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**.rs"
+      - Cargo.toml
+      - Cargo.lock
+      - .github/**
 
 env:
   CARGO_TERM_COLOR: always
@@ -12,49 +28,36 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
 
-  fmt:
-    name: Rustfmt
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: stable
+          components: rustfmt, clippy
           override: true
-          components: rustfmt
+
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
 
-  clippy:
-    name: Clippy
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/cache@v2
         with:
-          toolchain: stable
-          override: true
-          components: clippy
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo
+
       - uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: -- -D warnings
+          args: --all-features -- -D warnings
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-features
