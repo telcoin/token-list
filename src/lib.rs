@@ -45,6 +45,35 @@ pub struct TokenList {
     pub tokens: Vec<Token>,
 }
 
+impl TokenList {
+    /// Constructs a [`TokenList`] from the JSON contents of the specified URI.
+    ///
+    /// **Note**: This must be called from a running tokio >1.0.0 runtime.
+    #[cfg(feature = "from-uri")]
+    pub async fn from_uri<T: reqwest::IntoUrl>(uri: T) -> Result<Self, Error> {
+        Ok(reqwest::get(uri).await?.error_for_status()?.json().await?)
+    }
+
+    /// Constructs a [`TokenList`] from the JSON contents of the specified URI.
+    ///
+    /// **Note**: This must be called from a running tokio 0.1.x runtime.
+    #[cfg(feature = "from-uri-compat")]
+    pub async fn from_uri_compat<T: reqwest09::IntoUrl>(uri: T) -> Result<Self, Error> {
+        use futures::compat::Future01CompatExt;
+        use futures01::Future;
+        use reqwest09::r#async::{Client, Response};
+
+        let fut = Client::new()
+            .get(uri)
+            .send()
+            .and_then(Response::error_for_status)
+            .and_then(|mut res| res.json())
+            .compat();
+
+        Ok(fut.await?)
+    }
+}
+
 /// Metadata for a single token in a token list
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -52,7 +81,6 @@ pub struct Token {
     /// The name of the token
     pub name: String,
 
-    //
     /// The symbol for the token; must be alphanumeric.
     pub symbol: String,
 
@@ -110,6 +138,21 @@ pub enum Number {
     Float(f64),
 }
 
+/// Represents all errors that can occur when using this library.
+#[cfg(any(feature = "from-uri", feature = "from-uri-compat"))]
+#[derive(thiserror::Error, Debug)]
+pub enum Error {
+    /// HTTP/TCP etc. transport level error.
+    #[cfg(feature = "from-uri")]
+    #[error(transparent)]
+    Transport(#[from] reqwest::Error),
+
+    /// HTTP/TCP etc. transport level error.
+    #[cfg(feature = "from-uri-compat")]
+    #[error(transparent)]
+    TransportCompat(#[from] reqwest09::Error),
+}
+
 mod version {
     use semver::Version;
     use serde::{de, ser::SerializeStruct, Deserialize};
@@ -146,6 +189,32 @@ mod tests {
     use serde_json::json;
 
     use super::*;
+
+    const TELCOINS_TOKEN_LIST_URI: &str =
+        "https://raw.githubusercontent.com/telcoin/token-lists/e6a4cd7/telcoins.json";
+
+    #[cfg(feature = "from-uri")]
+    #[tokio::test]
+    async fn from_uri() {
+        let token_list = TokenList::from_uri(TELCOINS_TOKEN_LIST_URI).await.unwrap();
+        dbg!(&token_list);
+    }
+
+    #[cfg(feature = "from-uri-compat")]
+    #[test]
+    fn from_uri_compat() {
+        use futures::future::{FutureExt, TryFutureExt};
+        use tokio01::runtime::Runtime;
+
+        let mut rt = Runtime::new().unwrap();
+
+        rt.block_on(
+            TokenList::from_uri_compat(TELCOINS_TOKEN_LIST_URI)
+                .boxed()
+                .compat(),
+        )
+        .unwrap();
+    }
 
     #[test]
     fn can_serialize_deserialize_required_fields() {
