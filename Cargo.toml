@@ -1,6 +1,6 @@
 [package]
 name = "token-list"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["William Myers <will@telco.in>"]
 description = "Ethereum token list standard"
 repository = "https://github.com/telcoin/token-list.git"
