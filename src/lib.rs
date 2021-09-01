@@ -104,7 +104,7 @@ pub struct Token {
     pub address: String,
 
     /// The chain ID of the Ethereum network where this token is deployed
-    pub chain_id: u16,
+    pub chain_id: u32,
 
     /// The number of decimals for the token balance
     pub decimals: u16,
