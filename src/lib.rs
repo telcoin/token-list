@@ -124,6 +124,16 @@ pub struct Token {
     pub extensions: HashMap<String, Option<ExtensionValue>>,
 }
 
+impl Token {
+    /// Gets the value of `polygon_address` if present (and a `String`) in the
+    /// `extensions` map.
+    pub fn polygon_address(&self) -> Option<&str> {
+        self.extensions
+            .get("polygon_address")
+            .and_then(|val| val.as_ref().and_then(|v| v.as_str()))
+    }
+}
+
 /// Definition of a tag that can be associated with a token via its identifier
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
