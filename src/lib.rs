@@ -145,6 +145,48 @@ pub enum ExtensionValue {
     Boolean(bool),
 }
 
+impl ExtensionValue {
+    /// If the `ExtensionValue` is a `String`, returns the associated `str`.
+    /// Returns `None` otherwise.
+    pub fn as_str(&self) -> Option<&str> {
+        match self {
+            ExtensionValue::String(val) => Some(val),
+            ExtensionValue::Number(_) => None,
+            ExtensionValue::Boolean(_) => None,
+        }
+    }
+
+    /// If the `ExtensionValue` is a `Boolean`, returns the associated `bool`.
+    /// Returns `None` otherwise.
+    pub fn as_bool(&self) -> Option<bool> {
+        match self {
+            ExtensionValue::String(_) => None,
+            ExtensionValue::Number(_) => None,
+            ExtensionValue::Boolean(val) => Some(*val),
+        }
+    }
+
+    /// If the `ExtensionValue` is a `Number` and an `i64`, returns the
+    /// associated `i64`. Returns `None` otherwise.
+    pub fn as_i64(&self) -> Option<i64> {
+        match self {
+            ExtensionValue::String(_) => None,
+            ExtensionValue::Number(val) => val.as_i64(),
+            ExtensionValue::Boolean(_) => None,
+        }
+    }
+
+    /// If the `ExtensionValue` is a `Number` and an `f64`, returns the
+    /// associated `f64`. Returns `None` otherwise.
+    pub fn as_f64(&self) -> Option<f64> {
+        match self {
+            ExtensionValue::String(_) => None,
+            ExtensionValue::Number(val) => val.as_f64(),
+            ExtensionValue::Boolean(_) => None,
+        }
+    }
+}
+
 /// A number
 #[derive(Serialize, Deserialize, PartialEq, Clone, Copy, Debug)]
 #[serde(untagged)]
@@ -152,6 +194,26 @@ pub enum ExtensionValue {
 pub enum Number {
     Integer(i64),
     Float(f64),
+}
+
+impl Number {
+    /// If the `Number` is a `i64`, returns the associated `i64`. Returns `None`
+    /// otherwise.
+    pub fn as_i64(&self) -> Option<i64> {
+        match self {
+            Number::Integer(val) => Some(*val),
+            Number::Float(_) => None,
+        }
+    }
+
+    /// If the `Number` is a `f64`, returns the associated `f64`. Returns `None`
+    /// otherwise.
+    pub fn as_f64(&self) -> Option<f64> {
+        match self {
+            Number::Integer(_) => None,
+            Number::Float(val) => Some(*val),
+        }
+    }
 }
 
 /// Represents all errors that can occur when using this library.
