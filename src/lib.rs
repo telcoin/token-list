@@ -299,9 +299,9 @@ mod tests {
                     "logoURI": "https://raw.githubusercontent.com/telcoin/token-lists/master/assets/logo-telcoin-250x250.png",
                     "tags": ["telcoin"],
                     "extensions": {
-                        "is_mapped_to_matic": true,
-                        "matic_address": "0xdf7837de1f2fa4631d716cf2502f8b230f1dcc32",
-                        "matic_chain_id": 137
+                        "is_mapped_to_polygon": true,
+                        "polygon_address": "0xdf7837de1f2fa4631d716cf2502f8b230f1dcc32",
+                        "polygon_chain_id": 137
                     }
                 }
             ]
@@ -333,17 +333,17 @@ mod tests {
                 tags: vec!["telcoin".to_owned()],
                 extensions: vec![
                     (
-                        "is_mapped_to_matic".to_owned(),
+                        "is_mapped_to_polygon".to_owned(),
                         Some(ExtensionValue::Boolean(true)),
                     ),
                     (
-                        "matic_address".to_owned(),
+                        "polygon_address".to_owned(),
                         Some(ExtensionValue::String(
                             "0xdf7837de1f2fa4631d716cf2502f8b230f1dcc32".to_owned(),
                         )),
                     ),
                     (
-                        "matic_chain_id".to_owned(),
+                        "polygon_chain_id".to_owned(),
                         Some(ExtensionValue::Number(Number::Integer(137))),
                     ),
                 ]
