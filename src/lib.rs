@@ -125,11 +125,11 @@ pub struct Token {
 }
 
 impl Token {
-    /// Gets the value of `polygon_address` if present (and a `String`) in the
+    /// Gets the value of `polygonAddress` if present (and a `String`) in the
     /// `extensions` map.
     pub fn polygon_address(&self) -> Option<&str> {
         self.extensions
-            .get("polygon_address")
+            .get("polygonAddress")
             .and_then(|val| val.as_ref().and_then(|v| v.as_str()))
     }
 }
