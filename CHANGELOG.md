@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased](https://github.com/telcoin/token-list/compare/v0.4.0...HEAD) (2021-09-13)
+
+
 ## [v0.4.0](https://github.com/telcoin/token-list/compare/v0.3.0...v0.4.0) (2021-09-02)
 
 ### Features
