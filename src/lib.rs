@@ -71,6 +71,12 @@ impl TokenList {
     }
 
     /// Constructs a [`TokenList`] from the JSON contents of the specified URI.
+    #[cfg(feature = "from-uri-blocking")]
+    pub fn from_uri_blocking<T: reqwest::IntoUrl>(uri: T) -> Result<Self, Error> {
+        Ok(reqwest::blocking::get(uri)?.error_for_status()?.json()?)
+    }
+
+    /// Constructs a [`TokenList`] from the JSON contents of the specified URI.
     ///
     /// **Note**: This must be called from a running tokio 0.1.x runtime.
     #[cfg(feature = "from-uri-compat")]
@@ -227,7 +233,11 @@ impl Number {
 }
 
 /// Represents all errors that can occur when using this library.
-#[cfg(any(feature = "from-uri", feature = "from-uri-compat"))]
+#[cfg(any(
+    feature = "from-uri",
+    feature = "from-uri-blocking",
+    feature = "from-uri-compat"
+))]
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     /// HTTP/TCP etc. transport level error.
@@ -284,8 +294,13 @@ mod tests {
     #[cfg(feature = "from-uri")]
     #[tokio::test]
     async fn from_uri() {
-        let token_list = TokenList::from_uri(TELCOINS_TOKEN_LIST_URI).await.unwrap();
-        dbg!(&token_list);
+        let _token_list = TokenList::from_uri(TELCOINS_TOKEN_LIST_URI).await.unwrap();
+    }
+
+    #[cfg(feature = "from-uri-blocking")]
+    #[test]
+    fn from_uri_blocking() {
+        let _token_list = TokenList::from_uri_blocking(TELCOINS_TOKEN_LIST_URI).unwrap();
     }
 
     #[cfg(feature = "from-uri-compat")]

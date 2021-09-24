@@ -11,6 +11,7 @@ edition = "2018"
 
 [features]
 from-uri = ["reqwest", "thiserror"]
+from-uri-blocking = ["reqwest/blocking", "thiserror"]
 from-uri-compat = ["futures", "futures01", "reqwest09", "thiserror"]
 
 [dependencies]
