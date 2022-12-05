@@ -159,6 +159,7 @@ pub enum ExtensionValue {
     String(String),
     Number(Number),
     Boolean(bool),
+    Object(HashMap<String, serde_json::Value>),
 }
 
 impl ExtensionValue {
@@ -169,6 +170,7 @@ impl ExtensionValue {
             ExtensionValue::String(val) => Some(val),
             ExtensionValue::Number(_) => None,
             ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(_) => None,
         }
     }
 
@@ -179,6 +181,7 @@ impl ExtensionValue {
             ExtensionValue::String(_) => None,
             ExtensionValue::Number(_) => None,
             ExtensionValue::Boolean(val) => Some(*val),
+            ExtensionValue::Object(_) => None,
         }
     }
 
@@ -189,6 +192,7 @@ impl ExtensionValue {
             ExtensionValue::String(_) => None,
             ExtensionValue::Number(val) => val.as_i64(),
             ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(_) => None,
         }
     }
 
@@ -199,6 +203,18 @@ impl ExtensionValue {
             ExtensionValue::String(_) => None,
             ExtensionValue::Number(val) => val.as_f64(),
             ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(_) => None,
+        }
+    }
+
+    /// If the `ExtensionValue` is an `Object`, returns the associated
+    /// `HashMap<String, serde_json::Value>`. Returns `None` otherwise.
+    pub fn as_hashmap(&self) -> Option<&HashMap<String, serde_json::Value>> {
+        match self {
+            ExtensionValue::String(_) => None,
+            ExtensionValue::Number(_) => None,
+            ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(hashmap) => Some(&hashmap),
         }
     }
 }
@@ -290,11 +306,19 @@ mod tests {
 
     const TELCOINS_TOKEN_LIST_URI: &str =
         "https://raw.githubusercontent.com/telcoin/token-lists/e6a4cd7/telcoins.json";
+    const UNISWAP_TOKEN_LIST_URI: &str =
+        "https://gateway.ipfs.io/ipns/tokens.uniswap.org";
 
     #[cfg(feature = "from-uri")]
     #[tokio::test]
     async fn from_uri() {
         let _token_list = TokenList::from_uri(TELCOINS_TOKEN_LIST_URI).await.unwrap();
+    }
+
+    #[cfg(feature = "from-uri")]
+    #[tokio::test]
+    async fn from_uniswap_uri() {
+        let _token_list = TokenList::from_uri(UNISWAP_TOKEN_LIST_URI).await.unwrap();
     }
 
     #[cfg(feature = "from-uri-blocking")]
