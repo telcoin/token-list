@@ -362,7 +362,7 @@ mod tests {
 
         let data_rs = TokenList {
             name: "TELcoins".to_owned(),
-            timestamp: FixedOffset::west(0).ymd(2021, 7, 5).and_hms(20, 25, 22),
+            timestamp: FixedOffset::west_opt(0).unwrap().with_ymd_and_hms(2021, 7, 5, 20, 25, 22).unwrap(),
             version: Version::new(0, 1, 0),
             logo_uri: None,
             keywords: vec![],
@@ -421,7 +421,7 @@ mod tests {
         let logo_uri: Url = "https://raw.githubusercontent.com/telcoin/token-lists/master/assets/logo-telcoin-250x250.png".parse().unwrap();
         let data_rs = TokenList {
             name: "TELcoins".to_owned(),
-            timestamp: FixedOffset::west(0).ymd(2021, 7, 5).and_hms(20, 25, 22),
+            timestamp: FixedOffset::west_opt(0).unwrap().with_ymd_and_hms(2021, 7, 5, 20, 25, 22).unwrap(),
             version: Version::new(0, 1, 0),
             logo_uri: Some(logo_uri.clone()),
             keywords: vec!["defi".to_owned(), "telcoin".to_owned()],
