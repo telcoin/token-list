@@ -22,6 +22,7 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, FixedOffset};
+use schemars::JsonSchema;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 use url::Url;
@@ -29,7 +30,7 @@ use url::Url;
 /// A list of Ethereum token metadata conforming to the [token list schema].
 ///
 /// [token list schema]: https://uniswap.org/tokenlist.schema.json
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, PartialEq, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct TokenList {
     /// The name of the token list
@@ -41,6 +42,7 @@ pub struct TokenList {
 
     /// The version of the list, used in change detection
     #[serde(with = "version")]
+    #[schemars(with = "Version")]
     pub version: Version,
 
     /// A URI for the logo of the token list; prefer SVG or PNG of size 256x256
@@ -97,7 +99,7 @@ impl TokenList {
 }
 
 /// Metadata for a single token in a token list
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, PartialEq, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Token {
     /// The name of the token
@@ -141,7 +143,7 @@ impl Token {
 }
 
 /// Definition of a tag that can be associated with a token via its identifier
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, PartialEq, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Tag {
     /// The name of the tag
@@ -152,7 +154,7 @@ pub struct Tag {
 }
 
 /// The value for a user-defined extension.
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, PartialEq, Clone, Debug)]
 #[serde(untagged)]
 #[allow(missing_docs)]
 pub enum ExtensionValue {
@@ -204,7 +206,7 @@ impl ExtensionValue {
 }
 
 /// A number
-#[derive(Serialize, Deserialize, PartialEq, Clone, Copy, Debug)]
+#[derive(Serialize, Deserialize, JsonSchema, PartialEq, Clone, Copy, Debug)]
 #[serde(untagged)]
 #[allow(missing_docs)]
 pub enum Number {
@@ -323,7 +325,7 @@ mod tests {
     fn can_serialize_deserialize_required_fields() {
         let data_json = json!({
             "name": "TELcoins",
-            "timestamp": "2021-07-05T20:25:22+00:00",
+            "timestamp": "2021-07-05T20:25:22Z",
             "version": { "major": 0, "minor": 1, "patch": 0 },
             "tokens": [
                 {
@@ -366,7 +368,7 @@ mod tests {
     fn can_serialize_deserialize_all_fields() {
         let data_json = json!({
             "name": "TELcoins",
-            "timestamp": "2021-07-05T20:25:22+00:00",
+            "timestamp": "2021-07-05T20:25:22Z",
             "version": { "major": 0, "minor": 1, "patch": 0 },
             "logoURI": "https://raw.githubusercontent.com/telcoin/token-lists/master/assets/logo-telcoin-250x250.png",
             "keywords": ["defi", "telcoin"],
