@@ -161,6 +161,7 @@ pub enum ExtensionValue {
     String(String),
     Number(Number),
     Boolean(bool),
+    Object(HashMap<String, serde_json::Value>),
 }
 
 impl ExtensionValue {
@@ -171,6 +172,7 @@ impl ExtensionValue {
             ExtensionValue::String(val) => Some(val),
             ExtensionValue::Number(_) => None,
             ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(_) => None,
         }
     }
 
@@ -181,6 +183,7 @@ impl ExtensionValue {
             ExtensionValue::String(_) => None,
             ExtensionValue::Number(_) => None,
             ExtensionValue::Boolean(val) => Some(*val),
+            ExtensionValue::Object(_) => None,
         }
     }
 
@@ -191,6 +194,7 @@ impl ExtensionValue {
             ExtensionValue::String(_) => None,
             ExtensionValue::Number(val) => val.as_i64(),
             ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(_) => None,
         }
     }
 
@@ -201,6 +205,18 @@ impl ExtensionValue {
             ExtensionValue::String(_) => None,
             ExtensionValue::Number(val) => val.as_f64(),
             ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(_) => None,
+        }
+    }
+
+    /// If the `ExtensionValue` is an `Object`, returns the associated
+    /// `HashMap<String, serde_json::Value>`. Returns `None` otherwise.
+    pub fn as_hashmap(&self) -> Option<&HashMap<String, serde_json::Value>> {
+        match self {
+            ExtensionValue::String(_) => None,
+            ExtensionValue::Number(_) => None,
+            ExtensionValue::Boolean(_) => None,
+            ExtensionValue::Object(hashmap) => Some(&hashmap),
         }
     }
 }
@@ -292,11 +308,19 @@ mod tests {
 
     const TELCOINS_TOKEN_LIST_URI: &str =
         "https://raw.githubusercontent.com/telcoin/token-lists/e6a4cd7/telcoins.json";
+    const UNISWAP_TOKEN_LIST_URI: &str =
+        "https://gateway.ipfs.io/ipns/tokens.uniswap.org";
 
     #[cfg(feature = "from-uri")]
     #[tokio::test]
     async fn from_uri() {
         let _token_list = TokenList::from_uri(TELCOINS_TOKEN_LIST_URI).await.unwrap();
+    }
+
+    #[cfg(feature = "from-uri")]
+    #[tokio::test]
+    async fn from_uniswap_uri() {
+        let _token_list = TokenList::from_uri(UNISWAP_TOKEN_LIST_URI).await.unwrap();
     }
 
     #[cfg(feature = "from-uri-blocking")]
@@ -340,7 +364,7 @@ mod tests {
 
         let data_rs = TokenList {
             name: "TELcoins".to_owned(),
-            timestamp: FixedOffset::west(0).ymd(2021, 7, 5).and_hms(20, 25, 22),
+            timestamp: FixedOffset::west_opt(0).unwrap().with_ymd_and_hms(2021, 7, 5, 20, 25, 22).unwrap(),
             version: Version::new(0, 1, 0),
             logo_uri: None,
             keywords: vec![],
@@ -399,7 +423,7 @@ mod tests {
         let logo_uri: Url = "https://raw.githubusercontent.com/telcoin/token-lists/master/assets/logo-telcoin-250x250.png".parse().unwrap();
         let data_rs = TokenList {
             name: "TELcoins".to_owned(),
-            timestamp: FixedOffset::west(0).ymd(2021, 7, 5).and_hms(20, 25, 22),
+            timestamp: FixedOffset::west_opt(0).unwrap().with_ymd_and_hms(2021, 7, 5, 20, 25, 22).unwrap(),
             version: Version::new(0, 1, 0),
             logo_uri: Some(logo_uri.clone()),
             keywords: vec!["defi".to_owned(), "telcoin".to_owned()],
