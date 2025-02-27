@@ -1,7 +1,7 @@
 [package]
 name = "token-list"
-version = "0.6.0"
-authors = ["William Myers <will@telco.in>"]
+version = "0.7.0"
+authors = ["William Myers <will@telco.in>", "Walker Thornley <walker.thornley@telco.in>", "Justin Clitheroe <justin.clitheroe@telco.in>"]
 description = "Ethereum token list standard"
 repository = "https://github.com/telcoin/token-list.git"
 license = "MIT"
@@ -20,7 +20,8 @@ futures = { version = "0.3.13", features = ["compat"], optional = true }
 futures01 = { package = "futures", version = "0.1.25", optional = true }
 reqwest = { version = "0.11.4", features = ["json"], optional = true }
 reqwest09 = { package = "reqwest", version = "0.9.24", optional = true }
-semver = "0.9.0"
+schemars = { version = "0.8.21", features = ["chrono", "url", "semver"] }
+semver = "1.0.9"
 serde = { version = "1", features = ["derive"] }
 thiserror = { version = "1", optional = true }
 url = { version = "2", features = ["serde"] }
